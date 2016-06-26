@@ -1,3 +1,3 @@
 # python-selenium
 python selenium webdriver example
-python selenium2的测试
+python selenium2 例子
