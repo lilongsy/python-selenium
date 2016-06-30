@@ -13,7 +13,7 @@ def collect_list(bs):
     url_list = []
     # 分页
     i = 1
-    while i < 3:
+    while i <= 1:
         list = bs.find_elements_by_css_selector(".tuwen .style")
         for l in list:
             try:
@@ -31,16 +31,33 @@ def collect_list(bs):
     
 # 采集内容页
 def collect_content(bs, url_list):
+    i = 1
+    content_list = []
     for u in url_list:
         print u
         bs.get(u)
         time.sleep(2)
         try:
-            #print bs.find_element_by_css_selector(".TRS_Editor").get_attribute("innerHTML")
-            print bs.find_element_by_css_selector("h2").text
+            content = bs.find_element_by_css_selector(".TRS_Editor").get_attribute("innerHTML")
+            title = bs.find_element_by_css_selector("h2").text
+            publishTime = bs.find_element_by_xpath("//meta[@name='publishdate']").get_attribute("content")
+            content_list.append({"url":u, "content":content, "title":title, "publishTime":publishTime})
         except Exception, e:
             print e
             continue
+        finally:
+            # 限制运行次数,方便测试
+            if i >= 2:
+                break
+            i += 1
+    return content_list
+   
+   
+def save_content(content_list):
+    for content in content_list:
+        print ""
+        print content['url']
+        print content['title']
 
 
 # 主函数
@@ -50,8 +67,8 @@ def main():
     bs.get("http://sd.dzwww.com/sdnews/")
     time.sleep(2)
     url_list = collect_list(bs)
-    #print url_list
-    collect_content(bs, url_list)
+    content_list = collect_content(bs, url_list)
+    save_content(content_list)
     bs.quit()
     
     
